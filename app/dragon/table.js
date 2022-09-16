@@ -1,5 +1,5 @@
 const pool = require('../../databasePool');
-
+const DragonTraitTable = require('../dragonTrait/table');
 class DragonTable {
   static storeDragon(dragon) {
     const { birthdate, nickname, generationId } = dragon;
@@ -14,10 +14,21 @@ class DragonTable {
 
           const dragonId = response.rows[0].id;
 
-          resolve({ dragonId });
+          Promise.all(
+            dragon.traits.map(({ traitType, traitValue }) => {
+              return DragonTraitTable.storeDragonTrait({
+                dragonId,
+                traitType,
+                traitValue,
+              });
+            })
+          )
+            .then(() => resolve({ dragonId }))
+            .catch((error) => reject(error));
         }
       );
     });
   }
 }
+
 module.exports = DragonTable;

@@ -1,7 +1,7 @@
 [
   {
     "type": "backgroundColor",
-    "values": ["black", "white", "yellow", "gold", "purple"]
+    "values": ["black", "white", "yellow", "green", "purple"]
   },
   {
     "type": "pattern",
