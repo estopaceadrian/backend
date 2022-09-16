@@ -6,6 +6,7 @@ const refreshRate = REFRESH_RATE * SECONDS;
 class Generation {
   constructor() {
     this.expiration = this.calculateExpiration();
+    this.generationId = undefined;
   }
 
   calculateExpiration() {
@@ -24,7 +25,7 @@ class Generation {
       throw new Error(`This generation expired on ${this.expiration}`);
     }
 
-    return new Dragon();
+    return new Dragon({ generationId: this.generationId });
   }
 }
 
