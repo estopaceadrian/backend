@@ -5,14 +5,14 @@
   },
   {
     "type": "pattern",
-    "values": ["plain", "striped", "spotted,", "patchy"]
+    "values": ["plain", "striped", "spotted", "patchy"]
   },
   {
     "type": "build",
-    "values": ["slender", "stocky", "sporty,", "skinny"]
+    "values": ["slender", "stocky", "sporty", "skinny"]
   },
   {
     "type": "size",
-    "values": ["small", "medium", "large,", "enormous"]
+    "values": ["small", "medium", "large", "enormous"]
   }
 ]
