@@ -1,14 +1,15 @@
+const { response } = require('express');
 const pool = require('../../databasePool');
 const DragonTraitTable = require('../dragonTrait/table');
 class DragonTable {
   static storeDragon(dragon) {
-    const { birthdate, nickname, generationId } = dragon;
+    const { birthdate, nickname, generationId, isPublic, saleValue } = dragon;
 
     return new Promise((resolve, reject) => {
       pool.query(
-        `INSERT INTO dragon(birthdate, nickname, "generationId")
-         VALUES($1, $2, $3) RETURNING id`,
-        [birthdate, nickname, generationId],
+        `INSERT INTO dragon(birthdate, nickname, "generationId", "isPublic", "saleValue")
+         VALUES($1, $2, $3, $4, $5) RETURNING id`,
+        [birthdate, nickname, generationId, isPublic, saleValue],
         (error, response) => {
           if (error) return reject(error);
 
@@ -33,7 +34,7 @@ class DragonTable {
   static getDragon({ dragonId }) {
     return new Promise((resolve, reject) => {
       pool.query(
-        `SELECT birthdate, nickname,"generationId" 
+        `SELECT birthdate, nickname, "generationId", "isPublic, "saleValue"
          FROM dragon 
          WHERE dragon.id = $1`,
         [dragonId],
@@ -47,7 +48,37 @@ class DragonTable {
       );
     });
   }
+
+  static updateDragon({ dragonId, nickname, isPublic, saleValue }) {
+    const settingsMap = { nickname, isPublic, saleValue };
+
+    const ValidQueries = Object.entries(settingsMap).filter(
+      ([settingKey, settingValue]) => {
+        console.log('setting Key', settingKey, 'settingValue', settingValue);
+
+        if (settingValue !== undefined) {
+          return new Promise((resolve, reject) => {
+            pool.query(
+              `UPDATE dragon SET "${settingKey}" = $1 WHERE id =$2`,
+              [settingValue, dragonId],
+              (error, response) => {
+                if (error) return reject(error);
+
+                resolve();
+              }
+            );
+          });
+        }
+      }
+    );
+    return Promise.all(ValidQueries);
+  }
 }
+
+DragonTable.updateDragon({ dragonId: 1, nickname: 'fooby' })
+  .then(() => console.log('successfully updated dragon'))
+  .catch((error) => console.error('error', error));
+
 // DragonTable.getDragon({ dragonId: 1 })
 //   .then((dragon) => console.log(dragon))
 //   .catch((error) => console.error('error', error));
