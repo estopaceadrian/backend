@@ -3,12 +3,19 @@ const pool = require('../../databasePool');
 const DragonTraitTable = require('../dragonTrait/table');
 class DragonTable {
   static storeDragon(dragon) {
-    const { birthdate, nickname, generationId, isPublic, saleValue } = dragon;
+    const {
+      birthdate,
+      nickname,
+      generationId,
+      isPublic,
+      saleValue,
+      sireValue,
+    } = dragon;
 
     return new Promise((resolve, reject) => {
       pool.query(
-        `INSERT INTO dragon(birthdate, nickname, "generationId", "isPublic", "saleValue")
-         VALUES($1, $2, $3, $4, $5) RETURNING id`,
+        `INSERT INTO dragon(birthdate, nickname, "generationId", "isPublic", "saleValue", "sireValue")
+         VALUES($1, $2, $3, $4, $5, $6) RETURNING id`,
         [birthdate, nickname, generationId, isPublic, saleValue],
         (error, response) => {
           if (error) return reject(error);
@@ -34,7 +41,7 @@ class DragonTable {
   static getDragon({ dragonId }) {
     return new Promise((resolve, reject) => {
       pool.query(
-        `SELECT birthdate, nickname, "generationId", "isPublic, "saleValue"
+        `SELECT birthdate, nickname, "generationId", "isPublic, "saleValue", "sireValue"
          FROM dragon 
          WHERE dragon.id = $1`,
         [dragonId],
@@ -49,8 +56,8 @@ class DragonTable {
     });
   }
 
-  static updateDragon({ dragonId, nickname, isPublic, saleValue }) {
-    const settingsMap = { nickname, isPublic, saleValue };
+  static updateDragon({ dragonId, nickname, isPublic, saleValue, sireValue }) {
+    const settingsMap = { nickname, isPublic, saleValue, sireValue };
 
     const ValidQueries = Object.entries(settingsMap).filter(
       ([settingKey, settingValue]) => {
@@ -75,9 +82,9 @@ class DragonTable {
   }
 }
 
-DragonTable.updateDragon({ dragonId: 1, nickname: 'fooby' })
-  .then(() => console.log('successfully updated dragon'))
-  .catch((error) => console.error('error', error));
+// DragonTable.updateDragon({ dragonId: 1, nickname: 'fooby' })
+//   .then(() => console.log('successfully updated dragon'))
+//   .catch((error) => console.error('error', error));
 
 // DragonTable.getDragon({ dragonId: 1 })
 //   .then((dragon) => console.log(dragon))
